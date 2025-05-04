@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
 import PlayerHand from './components/PlayerHand.tsx';
 import { fullDeck } from './utils/cardPool.ts';
 
