@@ -2,22 +2,23 @@
 import { motion } from "framer-motion";
 
 interface AnimatedCardProps {
-  cardName: string; // like "ace_of_spades" or "2_of_hearts"
+  cardName: string;
+  partial?: boolean;
 }
 
-export default function AnimatedCard({ cardName }: AnimatedCardProps) {
+export default function AnimatedCard({ cardName, partial = false }: AnimatedCardProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.5 }}
+      initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.5 }}
-      transition={{ duration: 0.3 }}
-      className="w-[100px] h-[140px] p-2 bg-white rounded-lg shadow-md flex items-center justify-center"
+      exit={{ opacity: 0, scale: 0.8 }}
+      transition={{ duration: 0.2 }}
+      className={`h-[140px] ${partial ? 'w-[30px]' : 'w-[100px]'} bg-white rounded-md shadow-md overflow-hidden`}
     >
       <img
         src={`/cards/${cardName}.svg`}
         alt={cardName}
-        className="w-full h-full object-contain"
+        className="h-full w-[100px] object-left object-cover"
       />
     </motion.div>
   );

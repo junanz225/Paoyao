@@ -45,20 +45,32 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-green-300 p-8 flex flex-col items-center justify-between">
-      {/* Top row */}
-      <div className="flex justify-between w-full max-w-5xl mb-10">
-        <PlayerHand cards={players.player1} />
-        <PlayerHand cards={players.player2} />
-      </div>
+    <div className="min-h-screen bg-green-300 p-8 flex items-center justify-center">
+      <div className="grid grid-cols-3 grid-rows-3 gap-4 items-center justify-center">
+        {/* Top (Player 1) */}
+        <div className="col-span-3 flex justify-center">
+          <PlayerHand cards={players.player1} />
+        </div>
 
-      {/* Play Area */}
-      <div className="text-xl font-bold mb-10">Dealing Cards...</div>
+        {/* Left (Player 4) */}
+        <div className="row-span-1 flex justify-center">
+          <PlayerHand cards={players.player4} />
+        </div>
 
-      {/* Bottom row */}
-      <div className="flex justify-between w-full max-w-5xl">
-        <PlayerHand cards={players.player3} />
-        <PlayerHand cards={players.player4} />
+        {/* Center Table */}
+        <div className="w-[30vw] h-[30vw] bg-green-600 shadow-inner flex items-center justify-center text-white text-2xl font-bold">
+          Table
+        </div>
+
+        {/* Right (Player 2) */}
+        <div className="row-span-1 flex justify-center">
+          <PlayerHand cards={players.player2} />
+        </div>
+
+        {/* Bottom (Player 3) */}
+        <div className="col-span-3 flex justify-center">
+          <PlayerHand cards={players.player3} />
+        </div>
       </div>
     </div>
   );

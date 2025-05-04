@@ -6,9 +6,18 @@ interface PlayerHandProps {
 
 export default function PlayerHand({ cards }: PlayerHandProps) {
   return (
-    <div className="flex gap-1 flex-wrap justify-center">
+    <div className="relative h-[140px]">
       {cards.map((card, idx) => (
-        <AnimatedCard key={idx} cardName={card} />
+        <div
+          key={idx}
+          className="absolute"
+          style={{
+            left: `${idx * 20}px`, // adjust this value for spacing
+            zIndex: idx
+          }}
+        >
+          <AnimatedCard cardName={card} partial={idx !== cards.length - 1} />
+        </div>
       ))}
     </div>
   );
