@@ -45,31 +45,32 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-green-300 p-8 flex items-center justify-center">
-      <div className="grid grid-cols-3 grid-rows-3 gap-4 items-center justify-center">
-        {/* Top (Player 1) */}
-        <div className="col-span-3 flex justify-center">
-          <PlayerHand cards={players.player1} direction="horizontal" />
-        </div>
-
-        {/* Left (Player 4) */}
-        <div className="row-span-1 flex justify-center">
-          <PlayerHand cards={players.player4} direction="vertical" />
-        </div>
-
-        {/* Center Table */}
-        <div className="w-[30vw] h-[30vw] bg-green-600 shadow-inner flex items-center justify-center text-white text-2xl font-bold">
+    <div className="min-h-screen bg-green-300 p-2 flex items-center justify-center">
+      <div className="relative w-screen h-screen bg-green-300">
+        {/* Table (centered) */}
+        <div className="absolute top-1/2 left-1/2 w-[65vw] h-[35vw] bg-green-600 shadow-inner
+                        -translate-x-1/2 -translate-y-1/2 flex items-center justify-center text-white text-2xl font-bold">
           Table
         </div>
 
-        {/* Right (Player 2) */}
-        <div className="row-span-1 flex justify-center">
-          <PlayerHand cards={players.player2} direction="vertical" />
+        {/* Top Player (Player 1) */}
+        <div className="absolute top-4 left-1/2 -translate-x-1/2">
+          <PlayerHand cards={players.player1} direction="horizontal" />
         </div>
 
-        {/* Bottom (Player 3) */}
-        <div className="col-span-3 flex justify-center">
+        {/* Bottom Player (Player 3) */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
           <PlayerHand cards={players.player3} direction="horizontal" />
+        </div>
+
+        {/* Left Player (Player 4) */}
+        <div className="absolute left-4 top-1/2 -translate-y-1/2">
+          <PlayerHand cards={players.player4} direction="vertical" />
+        </div>
+
+        {/* Right Player (Player 2) */}
+        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+          <PlayerHand cards={players.player2} direction="vertical" />
         </div>
       </div>
     </div>
