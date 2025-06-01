@@ -55,22 +55,22 @@ export default function App() {
 
         {/* Top Player (Player 1) */}
         <div className="absolute top-4 left-1/2 -translate-x-1/2">
-          <PlayerHand cards={players.player1} direction="horizontal" />
+          <PlayerHand cards={players.player1} direction="horizontal" playerName="Itching" position="top" />
         </div>
 
         {/* Bottom Player (Player 3) */}
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
-          <PlayerHand cards={players.player3} direction="horizontal" />
+          <PlayerHand cards={players.player3} direction="horizontal" playerName="Andy" position="bottom" />
         </div>
 
         {/* Left Player (Player 4) */}
         <div className="absolute left-4 top-1/2 -translate-y-1/2">
-          <PlayerHand cards={players.player4} direction="vertical" />
+          <PlayerHand cards={players.player4} direction="vertical" playerName="Gabby" position="left" />
         </div>
 
         {/* Right Player (Player 2) */}
         <div className="absolute right-4 top-1/2 -translate-y-1/2">
-          <PlayerHand cards={players.player2} direction="vertical" />
+          <PlayerHand cards={players.player2} direction="vertical" playerName="Meiying" position="right" />
         </div>
       </div>
     </div>
