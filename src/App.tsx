@@ -49,12 +49,12 @@ export default function App() {
       <div className="grid grid-cols-3 grid-rows-3 gap-4 items-center justify-center">
         {/* Top (Player 1) */}
         <div className="col-span-3 flex justify-center">
-          <PlayerHand cards={players.player1} />
+          <PlayerHand cards={players.player1} direction="horizontal" />
         </div>
 
         {/* Left (Player 4) */}
         <div className="row-span-1 flex justify-center">
-          <PlayerHand cards={players.player4} />
+          <PlayerHand cards={players.player4} direction="vertical" />
         </div>
 
         {/* Center Table */}
@@ -64,12 +64,12 @@ export default function App() {
 
         {/* Right (Player 2) */}
         <div className="row-span-1 flex justify-center">
-          <PlayerHand cards={players.player2} />
+          <PlayerHand cards={players.player2} direction="vertical" />
         </div>
 
         {/* Bottom (Player 3) */}
         <div className="col-span-3 flex justify-center">
-          <PlayerHand cards={players.player3} />
+          <PlayerHand cards={players.player3} direction="horizontal" />
         </div>
       </div>
     </div>
