@@ -55,7 +55,7 @@ export default function App() {
 
         {/* Top Player (Player 1) */}
         <div className="absolute top-4 left-1/2 -translate-x-1/2">
-          <PlayerHand cards={players.player1} direction="horizontal" playerName="Itching" position="top" />
+          <PlayerHand cards={players.player1} direction="horizontal" playerName="Meiying" position="top" />
         </div>
 
         {/* Bottom Player (Player 3) */}
@@ -70,7 +70,7 @@ export default function App() {
 
         {/* Right Player (Player 2) */}
         <div className="absolute right-4 top-1/2 -translate-y-1/2">
-          <PlayerHand cards={players.player2} direction="vertical" playerName="Meiying" position="right" />
+          <PlayerHand cards={players.player2} direction="vertical" playerName="Itching" position="right" />
         </div>
       </div>
     </div>
