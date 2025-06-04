@@ -26,7 +26,7 @@ export default function AnimatedCard({ cardName, partial = false, direction = 'h
             }
     >
       <img
-        src={`cards/${cardName}.svg`}
+        src={`${process.env.PUBLIC_URL}/cards/${cardName}.svg`}
         alt={cardName}
         className={`h-full w-[100px] object-cover ${direction === 'vertical' ? 'object-top' : 'object-left'}`}
       />
