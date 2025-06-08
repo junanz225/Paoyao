@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import AnimatedCard from './AnimatedCard.tsx';
 
 interface PlayerHandProps {
@@ -7,9 +8,30 @@ interface PlayerHandProps {
   position: 'top' | 'bottom' | 'left' | 'right';
 }
 
-export default function PlayerHand({ cards, direction = 'horizontal', playerName, position }: PlayerHandProps) {
+export default function PlayerHand({
+  cards,
+  direction = 'horizontal',
+  playerName,
+  position
+}: PlayerHandProps) {
   const isVertical = direction === 'vertical';
   const isSide = position === 'left' || position === 'right';
+  const isBottomPlayer = position === 'bottom';
+
+  const [selectedCards, setSelectedCards] = useState<Set<string>>(new Set());
+
+  const toggleCard = (cardName: string) => {
+    if (!isBottomPlayer) return; // Only allow selection for bottom player
+    setSelectedCards(prev => {
+      const next = new Set(prev);
+      if (next.has(cardName)) {
+        next.delete(cardName);
+      } else {
+        next.add(cardName);
+      }
+      return next;
+    });
+  };
 
   const renderName = () => {
     if (isSide) {
@@ -26,7 +48,6 @@ export default function PlayerHand({ cards, direction = 'horizontal', playerName
     );
   };
 
-  // Wrapper alignment
   let layoutClasses = 'flex items-center justify-center';
   if (position === 'left') layoutClasses = 'flex flex-row-reverse items-center gap-2';
   if (position === 'right') layoutClasses = 'flex flex-row items-center gap-2';
@@ -44,23 +65,28 @@ export default function PlayerHand({ cards, direction = 'horizontal', playerName
           overflow: 'visible',
         }}
       >
-        {cards.map((card, idx) => (
-          <div
-            key={idx}
-            className="absolute"
-            style={{
-              left: isVertical ? undefined : `${idx * 20}px`,
-              top: isVertical ? `${idx * 20}px` : undefined,
-              zIndex: idx,
-            }}
-          >
-            <AnimatedCard
-              cardName={card}
-              partial={idx !== cards.length - 1}
-              direction={direction}
-            />
-          </div>
-        ))}
+        {cards.map((card, idx) => {
+          const selected = selectedCards.has(card);
+          return (
+            <div
+              key={`${card}-${idx}`}
+              className={`absolute transition-transform duration-200 ${selected ? '-translate-y-5' : ''}`}
+              style={{
+                left: isVertical ? undefined : `${idx * 20}px`,
+                top: isVertical ? `${idx * 20}px` : undefined,
+                zIndex: idx,
+                cursor: isBottomPlayer ? 'pointer' : 'default',
+              }}
+              onClick={() => toggleCard(card)}
+            >
+              <AnimatedCard
+                cardName={card}
+                partial={idx !== cards.length - 1}
+                direction={direction}
+              />
+            </div>
+          );
+        })}
       </div>
     </div>
   );
