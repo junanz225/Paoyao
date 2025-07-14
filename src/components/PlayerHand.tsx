@@ -73,7 +73,6 @@ export default function PlayerHand({
                 top: isVertical ? `${offset}px` : selected ? '-20px' : '0px',
                 zIndex: idx,
 
-                width: isVertical ? '100px' : (isLast ? '100px' : '40px'),
                 overflow: selected ? 'visible' : (isLast ? 'visible' : 'hidden'),
 
                 height: isVertical ? (isLast ? '140px' : '40px') : '140px',
