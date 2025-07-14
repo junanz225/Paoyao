@@ -12,77 +12,80 @@ export default function PlayerHand({
   cards,
   direction = 'horizontal',
   playerName,
-  position
+  position,
 }: PlayerHandProps) {
+  const [selectedIndexes, setSelectedIndexes] = useState<number[]>([]);
+  const isBottom = position === 'bottom';
   const isVertical = direction === 'vertical';
   const isSide = position === 'left' || position === 'right';
-  const isBottomPlayer = position === 'bottom';
 
-  const [selectedCards, setSelectedCards] = useState<Set<string>>(new Set());
-
-  const toggleCard = (cardName: string) => {
-    if (!isBottomPlayer) return; // Only allow selection for bottom player
-    setSelectedCards(prev => {
-      const next = new Set(prev);
-      if (next.has(cardName)) {
-        next.delete(cardName);
-      } else {
-        next.add(cardName);
-      }
-      return next;
-    });
+  const toggleCard = (idx: number) => {
+    if (!isBottom) return;
+    setSelectedIndexes(prev =>
+      prev.includes(idx) ? prev.filter(i => i !== idx) : [...prev, idx]
+    );
   };
 
   const renderName = () => {
     if (isSide) {
       return (
-        <div className="text-black text-3xl font-bold text-center leading-none whitespace-pre">
+        <div className="text-black text-2xl font-bold text-center leading-tight whitespace-pre">
           {playerName.split('').join('\n')}
         </div>
       );
     }
     return (
-      <div className="text-black text-3xl font-bold text-center whitespace-nowrap">
+      <div className="text-black text-2xl font-bold text-center whitespace-nowrap">
         {playerName}
       </div>
     );
   };
 
-  let layoutClasses = 'flex items-center justify-center';
-  if (position === 'left') layoutClasses = 'flex flex-row-reverse items-center gap-2';
-  if (position === 'right') layoutClasses = 'flex flex-row items-center gap-2';
-  if (position === 'top') layoutClasses = 'flex flex-col-reverse items-center gap-2';
-  if (position === 'bottom') layoutClasses = 'flex flex-col items-center gap-2';
+  const layoutClasses = {
+    left: 'flex flex-row-reverse items-center gap-2',
+    right: 'flex flex-row items-center gap-2',
+    top: 'flex flex-col-reverse items-center gap-2',
+    bottom: 'flex flex-col items-center gap-2',
+  }[position];
 
   return (
-    <div className={layoutClasses + ' relative'}>
+    <div className={`${layoutClasses} relative`}>
       {renderName()}
       <div
-        className={`relative ${isVertical ? 'w-[100px]' : 'h-[140px]'}`}
+        className="relative"
         style={{
-          height: isVertical ? `${(cards.length - 1) * 20 + 140}px` : undefined,
-          width: isVertical ? '100px' : `${(cards.length - 1) * 20 + 100}px`,
-          overflow: 'visible',
+          width: isVertical ? 100 : (cards.length - 1) * 20 + 100,
+          height: isVertical ? (cards.length - 1) * 20 + 140 : 140,
         }}
       >
         {cards.map((card, idx) => {
-          const selected = selectedCards.has(card);
+          const selected = selectedIndexes.includes(idx);
+          const isLast = idx === cards.length - 1;
+          const offset = idx * 20;
+
           return (
             <div
-              key={`${card}-${idx}`}
-              className={`absolute transition-transform duration-200 ${selected ? '-translate-y-5' : ''}`}
+              key={idx}
+              onClick={() => toggleCard(idx)}
               style={{
-                left: isVertical ? undefined : `${idx * 20}px`,
-                top: isVertical ? `${idx * 20}px` : undefined,
+                position: 'absolute',
+                left: isVertical ? undefined : `${offset}px`,
+                top: isVertical ? `${offset}px` : selected ? '-20px' : '0px',
                 zIndex: idx,
-                cursor: isBottomPlayer ? 'pointer' : 'default',
+
+                width: isVertical ? '100px' : (isLast ? '100px' : '40px'),
+                overflow: selected ? 'visible' : (isLast ? 'visible' : 'hidden'),
+
+                height: isVertical ? (isLast ? '140px' : '40px') : '140px',
+                width: isVertical ? '100px' : (isLast ? '100px' : '40px'),
+                transition: 'top 0.2s ease',
               }}
-              onClick={() => toggleCard(card)}
             >
               <AnimatedCard
                 cardName={card}
-                partial={idx !== cards.length - 1}
+                partial={!isLast && !selected}
                 direction={direction}
+                selected={selected}
               />
             </div>
           );

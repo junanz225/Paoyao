@@ -39,7 +39,7 @@ export default function App() {
       }));
 
       index++;
-    }, 100); // one card every 100ms
+    }, 10); // one card every 100ms
 
     return () => clearInterval(interval);
   }, []);
