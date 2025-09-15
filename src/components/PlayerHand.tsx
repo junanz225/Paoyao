@@ -90,6 +90,14 @@ export default function PlayerHand({
           );
         })}
       </div>
+      {selectedIndexes.length > 0 && (
+              <button
+                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg shadow"
+                onClick={() => console.log("Selected:", selectedCards)}
+              >
+                Confirm
+              </button>
+            )}
     </div>
   );
 }
