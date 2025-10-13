@@ -72,11 +72,9 @@ export default function PlayerHand({
                 left: isVertical ? undefined : `${offset}px`,
                 top: isVertical ? `${offset}px` : selected ? '-20px' : '0px',
                 zIndex: idx,
-
-                overflow: selected ? 'visible' : (isLast ? 'visible' : 'hidden'),
-
+                overflow: selected ? 'visible' : isLast ? 'visible' : 'hidden',
                 height: isVertical ? (isLast ? '140px' : '40px') : '140px',
-                width: isVertical ? '100px' : (isLast ? '100px' : '40px'),
+                width: isVertical ? '100px' : isLast ? '100px' : '40px',
                 transition: 'top 0.2s ease',
               }}
             >
@@ -89,15 +87,19 @@ export default function PlayerHand({
             </div>
           );
         })}
+
+        {selectedIndexes.length > 0 && (
+          <button
+            className="absolute -top-10 px-4 py-2 bg-blue-500 text-white rounded-lg shadow z-50"
+            style={{ right: '-100px' }}
+            onClick={() =>
+              console.log('Selected:', selectedIndexes.map(i => cards[i]))
+            }
+          >
+            Confirm
+          </button>
+        )}
       </div>
-      {selectedIndexes.length > 0 && (
-              <button
-                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg shadow"
-                onClick={() => console.log("Selected:", selectedCards)}
-              >
-                Confirm
-              </button>
-            )}
     </div>
   );
 }
