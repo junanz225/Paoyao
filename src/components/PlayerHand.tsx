@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AnimatedCard from './AnimatedCard.tsx';
 
 interface PlayerHandProps {
@@ -15,6 +15,13 @@ export default function PlayerHand({
   position,
 }: PlayerHandProps) {
   const [selectedIndexes, setSelectedIndexes] = useState<number[]>([]);
+  const [pendingCards, setPendingCards] = useState<string[]>([]);
+  const [handCards, setHandCards] = useState<string[]>(cards);
+
+  useEffect(() => {
+      setHandCards(cards);
+    }, [cards]);
+
   const isBottom = position === 'bottom';
   const isVertical = direction === 'vertical';
   const isSide = position === 'left' || position === 'right';
@@ -24,6 +31,16 @@ export default function PlayerHand({
     setSelectedIndexes(prev =>
       prev.includes(idx) ? prev.filter(i => i !== idx) : [...prev, idx]
     );
+  };
+
+  const handleConfirm = () => {
+      const selected = selectedIndexes.map(i => handCards[i]);
+
+      const remaining = handCards.filter((_, i) => !selectedIndexes.includes(i));
+
+      setPendingCards(selected);
+      setHandCards(remaining);
+      setSelectedIndexes([]);
   };
 
   const renderName = () => {
@@ -58,9 +75,10 @@ export default function PlayerHand({
           height: isVertical ? (cards.length - 1) * 20 + 140 : 140,
         }}
       >
-        {cards.map((card, idx) => {
+        {handCards.map((card, idx) => {
           const selected = selectedIndexes.includes(idx);
-          const isLast = idx === cards.length - 1;
+          const isLast = idx === handCards.length - 1;
+          const isPartial = !isLast && !selected;
           const offset = idx * 20;
 
           return (
@@ -72,15 +90,15 @@ export default function PlayerHand({
                 left: isVertical ? undefined : `${offset}px`,
                 top: isVertical ? `${offset}px` : selected ? '-20px' : '0px',
                 zIndex: idx,
-                overflow: selected ? 'visible' : isLast ? 'visible' : 'hidden',
-                height: isVertical ? (isLast ? '140px' : '40px') : '140px',
-                width: isVertical ? '100px' : isLast ? '100px' : '40px',
+                overflow: 'visible',
+                height: '140px',
+                width: '100px',
                 transition: 'top 0.2s ease',
               }}
             >
               <AnimatedCard
                 cardName={card}
-                partial={!isLast && !selected}
+                partial={isPartial}
                 direction={direction}
                 selected={selected}
               />
@@ -92,14 +110,27 @@ export default function PlayerHand({
           <button
             className="absolute -top-10 px-4 py-2 bg-blue-500 text-white rounded-lg shadow z-50"
             style={{ right: '-100px' }}
-            onClick={() =>
-              console.log('Selected:', selectedIndexes.map(i => cards[i]))
-            }
+            onClick={handleConfirm}
           >
             Confirm
           </button>
         )}
+
+        {pendingCards.length > 0 && (
+          <div className="absolute -top-40 left-1/2 -translate-x-1/2 flex gap-2">
+            {pendingCards.map((card, i) => (
+              <AnimatedCard
+                key={i}
+                cardName={card}
+                direction={direction}
+                selected
+              />
+            ))}
+          </div>
+        )}
+
       </div>
     </div>
+
   );
 }

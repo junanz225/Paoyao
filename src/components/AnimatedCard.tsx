@@ -45,6 +45,10 @@ export default function AnimatedCard({ cardName, partial = false, direction = 'h
       <img
         src={`${process.env.PUBLIC_URL}/cards/${cardName}.svg`}
         alt={cardName}
+        onError={(e) => {
+            console.warn(`Missing image for card: ${cardName}`);
+            (e.target as HTMLImageElement).src = `${process.env.PUBLIC_URL}/cards/back.svg`; // fallback
+          }}
         className={`h-full w-full object-cover ${direction === 'vertical' ? 'object-top' : 'object-left'}`}
       />
     </motion.div>
