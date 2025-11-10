@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import AnimatedCard from './AnimatedCard.tsx';
+import { createPortal } from "react-dom";
 
 interface PlayerHandProps {
   cards: string[];
@@ -15,7 +16,7 @@ export default function PlayerHand({
   position,
 }: PlayerHandProps) {
   const [selectedIndexes, setSelectedIndexes] = useState<number[]>([]);
-  const [pendingCards, setPendingCards] = useState<string[]>([]);
+  const [playedCards, setPlayedCards] = useState<string[]>([]);
   const [handCards, setHandCards] = useState<string[]>(cards);
 
   useEffect(() => {
@@ -38,7 +39,7 @@ export default function PlayerHand({
 
       const remaining = handCards.filter((_, i) => !selectedIndexes.includes(i));
 
-      setPendingCards(selected);
+      setPlayedCards(selected);
       setHandCards(remaining);
       setSelectedIndexes([]);
   };
@@ -66,71 +67,73 @@ export default function PlayerHand({
   }[position];
 
   return (
-    <div className={`${layoutClasses} relative`}>
-      {renderName()}
-      <div
-        className="relative"
-        style={{
-          width: isVertical ? 100 : (cards.length - 1) * 20 + 100,
-          height: isVertical ? (cards.length - 1) * 20 + 140 : 140,
-        }}
-      >
-        {handCards.map((card, idx) => {
-          const selected = selectedIndexes.includes(idx);
-          const isLast = idx === handCards.length - 1;
-          const isPartial = !isLast && !selected;
-          const offset = idx * 20;
-
-          return (
-            <div
-              key={idx}
-              onClick={() => toggleCard(idx)}
-              style={{
-                position: 'absolute',
-                left: isVertical ? undefined : `${offset}px`,
-                top: isVertical ? `${offset}px` : selected ? '-20px' : '0px',
-                zIndex: idx,
-                overflow: 'visible',
-                height: '140px',
-                width: '100px',
-                transition: 'top 0.2s ease',
-              }}
-            >
-              <AnimatedCard
-                cardName={card}
-                partial={isPartial}
-                direction={direction}
-                selected={selected}
-              />
-            </div>
-          );
-        })}
-
-        {selectedIndexes.length > 0 && (
-          <button
-            className="absolute -top-10 px-4 py-2 bg-blue-500 text-white rounded-lg shadow z-50"
-            style={{ right: '-100px' }}
-            onClick={handleConfirm}
+      <>
+        <div className={`${layoutClasses} relative`}>
+          {renderName()}
+          <div
+            className="relative"
+            style={{
+              width: isVertical ? 100 : (cards.length - 1) * 20 + 100,
+              height: isVertical ? (cards.length - 1) * 20 + 140 : 140,
+            }}
           >
-            Confirm
-          </button>
-        )}
+            {handCards.map((card, idx) => {
+              const selected = selectedIndexes.includes(idx);
+              const isLast = idx === handCards.length - 1;
+              const isPartial = !isLast && !selected;
+              const offset = idx * 20;
 
-        {pendingCards.length > 0 && (
-          <div className="absolute -top-40 left-1/2 -translate-x-1/2 flex gap-2">
-            {pendingCards.map((card, i) => (
-              <AnimatedCard
-                key={i}
-                cardName={card}
-                direction={direction}
-                selected
-              />
-            ))}
+              return (
+                <div
+                  key={idx}
+                  onClick={() => toggleCard(idx)}
+                  style={{
+                    position: 'absolute',
+                    left: isVertical ? undefined : `${offset}px`,
+                    top: isVertical ? `${offset}px` : selected ? '-20px' : '0px',
+                    zIndex: idx,
+                    overflow: 'visible',
+                    height: '140px',
+                    width: '100px',
+                    transition: 'top 0.2s ease',
+                  }}
+                >
+                  <AnimatedCard
+                    cardName={card}
+                    partial={isPartial}
+                    direction={direction}
+                    selected={selected}
+                  />
+                </div>
+              );
+            })}
+
+            {selectedIndexes.length > 0 && (
+              <button
+                className="absolute -top-10 px-4 py-2 bg-blue-500 text-white rounded-lg shadow z-50"
+                style={{ right: '-100px' }}
+                onClick={handleConfirm}
+              >
+                Confirm
+              </button>
+            )}
           </div>
-        )}
+        </div>
 
-      </div>
-    </div>
-
+        {playedCards.length > 0 && (
+          createPortal(
+              <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex gap-2 z-50">
+                {playedCards.map((card, i) => (
+                  <AnimatedCard
+                    key={i}
+                    cardName={card}
+                    direction={direction}
+                    selected
+                  />
+                ))}
+              </div>,
+              document.body
+        ))}
+      </>
   );
 }
