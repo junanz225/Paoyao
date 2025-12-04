@@ -1,78 +1,83 @@
-import React, { useEffect, useState } from 'react';
-import PlayerHand from './components/PlayerHand.tsx';
-import { fullDeck } from './utils/cardPool.ts';
-
-function shuffle(array: string[]) {
-  const copy = [...array];
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
-}
+import React, { useState, useRef } from "react";
+import WelcomePage from "./components/WelcomePage";
+import WaitingRoom from "./components/WaitingRoom";
+import GameRoom from "./components/GameRoom.tsx";
 
 export default function App() {
-  const [players, setPlayers] = useState({
-    player1: [] as string[],
-    player2: [] as string[],
-    player3: [] as string[],
-    player4: [] as string[],
-  });
+  const [phase, setPhase] = useState("welcome"); // welcome → waiting → game
+  const [playerName, setPlayerName] = useState(null);
+  const [playerId, setPlayerId] = useState(null);
+  const [playerList, setPlayerList] = useState([]);
 
-  useEffect(() => {
-    const shuffled = shuffle(fullDeck);
-    let index = 0;
+  const wsRef = useRef(null);
 
-    const interval = setInterval(() => {
-      if (index >= 108) {
-        clearInterval(interval);
-        return;
+  const BACKEND_WS_URL = "ws://localhost:8080/ws/paoyao";
+
+  const joinGame = (name) => {
+    setPlayerName(name);
+
+    const ws = new WebSocket(BACKEND_WS_URL);
+    wsRef.current = ws;
+
+    ws.onopen = () => {
+      ws.send(
+        JSON.stringify({
+          type: "join",
+          name: name,
+        })
+      );
+      setPhase("waiting");
+    };
+
+    ws.onmessage = (msg) => {
+      const data = JSON.parse(msg.data);
+      console.log("FROM SERVER:", data);
+
+      switch (data.type) {
+        case "joined":
+          setPlayerId(data.playerId);
+          break;
+
+        case "player_list":
+          setPlayerList(data.payload);
+          break;
+
+        case "game_start":
+          setPhase("game");
+          break;
+
+        default:
+          console.warn("Unknown message:", data);
       }
+    };
 
-      const playerIndex = index % 4;
-      const card = shuffled[index];
-      const playerKey = `player${playerIndex + 1}` as keyof typeof players;
+    ws.onerror = () => {
+      alert("Failed to connect to server");
+    };
+  };
 
-      setPlayers(prev => ({
-        ...prev,
-        [playerKey]: [...prev[playerKey], card]
-      }));
+  if (phase === "welcome") {
+    return <WelcomePage onJoin={joinGame} />;
+  }
 
-      index++;
-    }, 10); // one card every 100ms
+  if (phase === "waiting") {
+    return (
+      <WaitingRoom
+        players={playerList}
+        selfName={playerName}
+      />
+    );
+  }
 
-    return () => clearInterval(interval);
-  }, []);
+  if (phase === "game") {
+    return (
+        <GameRoom
+          players={playerList}
+          selfId={playerId}
+        />
+     );
+  }
 
-  return (
-    <div className="min-h-screen bg-green-300 p-2 flex items-center justify-center">
-      <div className="relative w-screen h-screen bg-green-300">
-        {/* Table (centered) */}
-        <div className="absolute top-1/2 left-1/2 w-[65vw] h-[35vw] bg-green-600 shadow-inner
-                        -translate-x-1/2 -translate-y-1/2 flex items-center justify-center text-white text-2xl font-bold">
-          Table
-        </div>
-
-        {/* Top Player (Player 1) */}
-        <div className="absolute top-4 left-1/2 -translate-x-1/2">
-          <PlayerHand cards={players.player1} direction="horizontal" playerName="Meiying" position="top" />
-        </div>
-
-        {/* Bottom Player (Player 3) */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
-          <PlayerHand cards={players.player3} direction="horizontal" playerName="Andy" position="bottom" />
-        </div>
-
-        {/* Left Player (Player 4) */}
-        <div className="absolute left-4 top-1/2 -translate-y-1/2">
-          <PlayerHand cards={players.player4} direction="vertical" playerName="Gabby" position="left" />
-        </div>
-
-        {/* Right Player (Player 2) */}
-        <div className="absolute right-4 top-1/2 -translate-y-1/2">
-          <PlayerHand cards={players.player2} direction="vertical" playerName="Itching" position="right" />
-        </div>
-      </div>
-    </div>
-  );
+  return null;
 }
+
