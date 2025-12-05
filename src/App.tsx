@@ -11,7 +11,7 @@ export default function App() {
 
   const wsRef = useRef(null);
 
-  const BACKEND_WS_URL = "ws://localhost:8080/ws/paoyao";
+  const BACKEND_WS_URL = "wss://paoyao.zhaojunan.com/ws/paoyao";
 
   const joinGame = (name) => {
     setPlayerName(name);
